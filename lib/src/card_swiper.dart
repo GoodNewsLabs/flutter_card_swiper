@@ -433,6 +433,10 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper> with SingleTi
       return widget.cardsCount;
     }
 
+    if (_currentIndex == null) {
+      return 0;
+    }
+
     return widget.cardsCount - _currentIndex!;
   }
 
