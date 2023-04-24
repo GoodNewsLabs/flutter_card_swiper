@@ -16,6 +16,7 @@ class ExampleCard extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
+        // color: Colors.transparent,
         color: Colors.white,
         boxShadow: [
           BoxShadow(

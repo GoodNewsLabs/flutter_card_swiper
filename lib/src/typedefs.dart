@@ -17,3 +17,8 @@ typedef CardSwiperOnUndo = bool Function(
   int currentIndex,
   CardSwiperDirection direction,
 );
+typedef CardSwiperOnMoving = void Function(
+  int currentIndex,
+  double left,
+  double top,
+);

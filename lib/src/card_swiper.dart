@@ -106,6 +106,15 @@ class CardSwiper extends StatefulWidget {
   /// on top of the stack. If the function returns `true`, the undo action is performed as expected.
   final CardSwiperOnUndo? onUndo;
 
+  /// Stack card distance. The default value is -10.
+  final double offset;
+
+  /// Scale card alignment. The default value is Alignment.topCenter.
+  final Alignment scaleCardAlignment;
+
+  /// Callback function that is called when card is moving.
+  final CardSwiperOnMoving? onMoving;
+
   const CardSwiper({
     Key? key,
     required this.cardBuilder,
@@ -127,6 +136,9 @@ class CardSwiper extends StatefulWidget {
     this.isLoop = true,
     this.numberOfCardsDisplayed = 2,
     this.onUndo,
+    this.offset = -10,
+    this.scaleCardAlignment = Alignment.topCenter,
+    this.onMoving,
   })  : assert(
           maxAngle >= 0 && maxAngle <= 360,
           'maxAngle must be between 0 and 360',
@@ -157,8 +169,7 @@ class CardSwiper extends StatefulWidget {
   State createState() => _CardSwiperState();
 }
 
-class _CardSwiperState<T extends Widget> extends State<CardSwiper>
-    with SingleTickerProviderStateMixin {
+class _CardSwiperState<T extends Widget> extends State<CardSwiper> with SingleTickerProviderStateMixin {
   late CardAnimation _cardAnimation;
   late AnimationController _animationController;
 
@@ -170,7 +181,9 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
   final Queue<CardSwiperDirection> _directionHistory = Queue();
 
   int? get _currentIndex => _undoableIndex.state;
+
   int? get _nextIndex => getValidIndexOffset(1);
+
   bool get _canSwipe => _currentIndex != null && !widget.isDisabled;
 
   @override
@@ -194,6 +207,9 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
       initialScale: widget.scale,
       isVerticalSwipingEnabled: widget.isVerticalSwipingEnabled,
       isHorizontalSwipingEnabled: widget.isHorizontalSwipingEnabled,
+      offset: widget.offset,
+      verticalShaking: widget.padding.vertical,
+      horizontalShaking: widget.padding.horizontal,
     );
   }
 
@@ -218,9 +234,6 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
                 children: List.generate(numberOfCardsOnScreen(), (index) {
                   if (index == 0) {
                     return _frontItem(constraints);
-                  }
-                  if (index == 1) {
-                    return _secondItem(constraints);
                   }
                   return _backItem(constraints, index);
                 }).reversed.toList(),
@@ -264,8 +277,10 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
                 tapInfo.delta.dx,
                 tapInfo.delta.dy,
                 _tappedOnTop,
+                Size(constraints.maxWidth, constraints.maxHeight),
               ),
             );
+            widget.onMoving?.call(_currentIndex!, _cardAnimation.left, _cardAnimation.top);
           }
         },
         onPanEnd: (tapInfo) {
@@ -278,31 +293,25 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
     );
   }
 
-  Widget _secondItem(BoxConstraints constraints) {
-    return Positioned(
-      top: _cardAnimation.difference,
-      left: 0,
-      child: Transform.scale(
-        scale: _cardAnimation.scale,
-        child: ConstrainedBox(
-          constraints: constraints,
-          child: widget.cardBuilder(context, _nextIndex!),
-        ),
-      ),
-    );
-  }
+  Widget _backItem(BoxConstraints constraints, int index) {
+    var top = widget.offset * (widget.numberOfCardsDisplayed - 1);
+    var scale = pow(widget.scale, widget.numberOfCardsDisplayed - 1) as double;
 
-  Widget _backItem(BoxConstraints constraints, int offset) {
+    if (index < widget.numberOfCardsDisplayed) {
+      top = _cardAnimation.difference + widget.offset * (index - 1);
+      scale = _cardAnimation.scale * pow(widget.scale, index - 1);
+    }
     return Positioned(
-      top: 40,
+      top: top,
       left: 0,
       child: Transform.scale(
-        scale: widget.scale,
+        scale: scale,
+        alignment: widget.scaleCardAlignment,
         child: ConstrainedBox(
           constraints: constraints,
           child: widget.cardBuilder(
             context,
-            getValidIndexOffset(offset)!,
+            getValidIndexOffset(index)!,
           ),
         ),
       ),
@@ -343,16 +352,13 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
         default:
           break;
       }
-
       _reset();
     }
   }
 
   Future<void> _handleCompleteSwipe() async {
     final isLastCard = _currentIndex! == widget.cardsCount - 1;
-    final shouldCancelSwipe = await widget.onSwipe
-            ?.call(_currentIndex!, _nextIndex, _detectedDirection) ==
-        false;
+    final shouldCancelSwipe = await widget.onSwipe?.call(_currentIndex!, _nextIndex, _detectedDirection) == false;
 
     if (shouldCancelSwipe) {
       return;
@@ -376,14 +382,10 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
 
   void _onEndAnimation() {
     if (_cardAnimation.left.abs() > widget.threshold) {
-      final direction = _cardAnimation.left.isNegative
-          ? CardSwiperDirection.left
-          : CardSwiperDirection.right;
+      final direction = _cardAnimation.left.isNegative ? CardSwiperDirection.left : CardSwiperDirection.right;
       _swipe(direction);
     } else if (_cardAnimation.top.abs() > widget.threshold) {
-      final direction = _cardAnimation.top.isNegative
-          ? CardSwiperDirection.top
-          : CardSwiperDirection.bottom;
+      final direction = _cardAnimation.top.isNegative ? CardSwiperDirection.top : CardSwiperDirection.bottom;
       _swipe(direction);
     } else {
       _goBack();
@@ -428,16 +430,10 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper>
 
   int numberOfCardsOnScreen() {
     if (widget.isLoop) {
-      return widget.numberOfCardsDisplayed;
-    }
-    if (_currentIndex == null) {
-      return 0;
+      return widget.cardsCount;
     }
 
-    return min(
-      widget.numberOfCardsDisplayed,
-      widget.cardsCount - _currentIndex!,
-    );
+    return widget.cardsCount - _currentIndex!;
   }
 
   int? getValidIndexOffset(int offset) {

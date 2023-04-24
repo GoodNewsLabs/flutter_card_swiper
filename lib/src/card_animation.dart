@@ -9,22 +9,28 @@ class CardAnimation {
     required this.animationController,
     required this.maxAngle,
     required this.initialScale,
+    required this.offset,
     this.isHorizontalSwipingEnabled = true,
     this.isVerticalSwipingEnabled = true,
-  }) : scale = initialScale;
+    this.verticalShaking = 0.0,
+    this.horizontalShaking = 0.0,
+  })  : scale = initialScale,
+        difference = offset;
 
   final double maxAngle;
   final double initialScale;
   final AnimationController animationController;
   final bool isHorizontalSwipingEnabled;
   final bool isVerticalSwipingEnabled;
+  final double offset;
+  final double verticalShaking;
+  final double horizontalShaking;
 
   double left = 0;
   double top = 0;
-  double total = 0;
   double angle = 0;
   double scale;
-  double difference = 40;
+  double difference;
 
   late Animation<double> _leftAnimation;
   late Animation<double> _topAnimation;
@@ -32,6 +38,10 @@ class CardAnimation {
   late Animation<double> _differenceAnimation;
 
   double get _maxAngleInRadian => maxAngle * (pi / 180);
+
+  double get maxMovingDistance => max(left, top);
+
+  bool get isWithinTheShakingRange => left.abs() < horizontalShaking && top.abs() < verticalShaking;
 
   void sync() {
     left = _leftAnimation.value;
@@ -44,23 +54,22 @@ class CardAnimation {
     animationController.reset();
     left = 0;
     top = 0;
-    total = 0;
     angle = 0;
     scale = initialScale;
-    difference = 40;
+    difference = offset;
   }
 
-  void update(double dx, double dy, bool inverseAngle) {
+  void update(double dx, double dy, bool inverseAngle, Size size) {
     if (isHorizontalSwipingEnabled) {
       left += dx;
     }
     if (isVerticalSwipingEnabled) {
       top += dy;
     }
-    total = left + top;
+    final movingRatio = getMovingRatio(size);
     updateAngle(inverseAngle);
-    updateScale();
-    updateDifference();
+    updateScale(movingRatio);
+    updateDifference(movingRatio);
   }
 
   void updateAngle(bool inverse) {
@@ -70,17 +79,22 @@ class CardAnimation {
     }
   }
 
-  void updateScale() {
-    if (scale.isBetween(initialScale, 1.0)) {
-      scale = (total > 0)
-          ? initialScale + (total / 5000)
-          : initialScale + -(total / 5000);
+  double getMovingRatio(Size size) {
+    final verticalRatio = (left.abs() - horizontalShaking) / (size.width / 2);
+    final horizontalRatio = (top.abs() - verticalShaking) / (size.height / 2);
+    final ratio = max<double>(verticalRatio, horizontalRatio);
+    return ratio >= 1 ? 1 : ratio;
+  }
+
+  void updateScale(double ratio) {
+    if (!isWithinTheShakingRange) {
+      scale = initialScale + (1 - initialScale) * ratio;
     }
   }
 
-  void updateDifference() {
-    if (difference.isBetween(0, difference)) {
-      difference = (total > 0) ? 40 - (total / 10) : 40 + (total / 10);
+  void updateDifference(double ratio) {
+    if (!isWithinTheShakingRange) {
+      difference = offset * (1 - ratio);
     }
   }
 
@@ -158,7 +172,7 @@ class CardAnimation {
     ).animate(animationController);
     _differenceAnimation = Tween<double>(
       begin: difference,
-      end: 40,
+      end: offset,
     ).animate(animationController);
     animationController.forward();
   }
