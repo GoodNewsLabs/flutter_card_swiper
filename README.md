@@ -96,27 +96,28 @@ class Example extends StatelessWidget {
 
 #### Basic
 
-| Parameter                  | Default                                            | Description                                                                                                                                                            | Required |
-| -------------------------- | :------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
-| cardBuilder                | -                                                  | Widget builder for rendering cards                                                                                                                                     |  true    |
-| cardsCount                 | -                                                  | Number of cards                                                                                                                                                        |  true    |
-| controller                 | -                                                  | Controller to trigger swipe actions                                                                                                                                    |  false   |
-| direction                  | right                                              | Direction in which the card is swiped away when triggered from the controller                                                                                          |  false   |
-| duration                   | 200 milliseconds                                   | The duration that every animation should last                                                                                                                          |  false   |
-| initialIndex               | 0                                                  | Index of the first card when the swiper is initialized                                                                                                                 |  false   |
-| isDisabled                 | false                                              | Set to `true` if swiping should be disabled, has no impact when triggered from the outside                                                                             |  false   |
-| isHorizontalSwipingEnabled | true                                               | Set to `false` if you want your card to move only across the vertical axis when swiping                                                                                |  false   |
-| isLoop                     | true                                               | Set to `true` if the stack should loop                                                                                                                                 |  false   |
-| isVerticalSwipingEnabled   | true                                               | Set to `false` if you want your card to move only across the horizontal axis when swiping                                                                              |  false   |
-| maxAngle                   | 30                                                 | Maximum angle that the card can reach during swiping                                                                                                                   |  false   |
-| numberOfCardsDisplayed     | 2                                                  | Number of cards displayed at the same time                                                                                                                             |  false   |
-| onEnd                      | -                                                  | Callback when there are no more cards left to swipe                                                                                                                    |  false   |
-| onSwipe                    | -                                                  | Callback when the user swipes a card. If the function returns `false`, the swipe action is canceled. If it returns `true`, the swipe action is performed as expected   |  false   |
-| onTapDisabled              | -                                                  | Callback when a card is tapped and `isDisabled` is `true`                                                                                                              |  false   |
-| onUndo                     | -                                                  | Callback when the controller calls undo. If the function returns `false`, the undo action is canceled. If it returns `true`, the undo action is performed as expected  |  false   |
-| padding                    | EdgeInsets.symmetric(horizontal: 20, vertical: 25) | The padding around the swiper                                                                                                                                          |  false   |
-| scale                      | 0.9                                                | Scale of the card that is behind the front card                                                                                                                        |  false   |
-| threshold                  | 50                                                 | Threshold from which the card is swiped away                                                                                                                           |  false   |
+| Parameter                  | Default                                            | Description                                                  | Required |
+| -------------------------- | :------------------------------------------------- | :----------------------------------------------------------- | :------: |
+| cardBuilder                | -                                                  | Widget builder for rendering cards                           |   true   |
+| cardsCount                 | -                                                  | Number of cards                                              |   true   |
+| controller                 | -                                                  | Controller to trigger swipe actions                          |  false   |
+| direction                  | right                                              | Direction in which the card is swiped away when triggered from the controller |  false   |
+| duration                   | 200 milliseconds                                   | The duration that every animation should last                |  false   |
+| initialIndex               | 0                                                  | Index of the first card when the swiper is initialized       |  false   |
+| isDisabled                 | false                                              | Set to `true` if swiping should be disabled, has no impact when triggered from the outside |  false   |
+| isHorizontalSwipingEnabled | true                                               | Set to `false` if you want your card to move only across the vertical axis when swiping |  false   |
+| isLoop                     | true                                               | Set to `true` if the stack should loop                       |  false   |
+| isVerticalSwipingEnabled   | true                                               | Set to `false` if you want your card to move only across the horizontal axis when swiping |  false   |
+| maxAngle                   | 30                                                 | Maximum angle that the card can reach during swiping         |  false   |
+| numberOfCardsDisplayed     | 2                                                  | Number of cards displayed at the same time                   |  false   |
+| onEnd                      | -                                                  | Callback when there are no more cards left to swipe          |  false   |
+| onSwipe                    | -                                                  | Callback when the user swipes a card. If the function returns `false`, the swipe action is canceled. If it returns `true`, the swipe action is performed as expected |  false   |
+| onTapDisabled              | -                                                  | Callback when a card is tapped and `isDisabled` is `true`    |  false   |
+| onUndo                     | -                                                  | Callback when the controller calls undo. If the function returns `false`, the undo action is canceled. If it returns `true`, the undo action is performed as expected |  false   |
+| padding                    | EdgeInsets.symmetric(horizontal: 20, vertical: 25) | The padding around the swiper                                |  false   |
+| scale                      | 0.9                                                | Scale of the card that is behind the front card              |  false   |
+| threshold                  | 50                                                 | Threshold from which the card is swiped away                 |  false   |
+| onMoving                   | -                                                  | Callback function that is called when card is moving.        |  false   |
 
 #### Controller
 
