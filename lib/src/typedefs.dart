@@ -22,3 +22,5 @@ typedef CardSwiperOnMoving = void Function(
   double dx,
   double dy,
 );
+
+typedef CardSwiperOnCancel = void Function();

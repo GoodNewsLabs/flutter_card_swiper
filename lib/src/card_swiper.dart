@@ -115,6 +115,11 @@ class CardSwiper extends StatefulWidget {
   /// Callback function that is called when card is moving.
   final CardSwiperOnMoving? onMoving;
 
+  /// Callback function that is called when card is cancel.
+  final CardSwiperOnCancel? onCancelling;
+
+
+
   const CardSwiper({
     Key? key,
     required this.cardBuilder,
@@ -139,6 +144,7 @@ class CardSwiper extends StatefulWidget {
     this.offset = -10,
     this.scaleCardAlignment = Alignment.topCenter,
     this.onMoving,
+    this.onCancelling,
   })  : assert(
           maxAngle >= 0 && maxAngle <= 360,
           'maxAngle must be between 0 and 360',
@@ -404,6 +410,7 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper> with SingleTi
     _swipeType = SwipeType.back;
     _detectedDirection = CardSwiperDirection.none;
     _cardAnimation.animateBack(context);
+    widget.onCancelling?.call();
   }
 
   void _undo() {

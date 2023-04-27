@@ -40,6 +40,7 @@ class _ExamplePageState extends State<Example> {
                 onSwipe: _onSwipe,
                 onUndo: _onUndo,
                 onMoving: _onMoving,
+                onCancelling: _onCancelling,
                 padding: const EdgeInsets.all(24.0),
                 cardBuilder: (context, index) => cards[index],
               ),
@@ -111,6 +112,12 @@ class _ExamplePageState extends State<Example> {
   ) {
     debugPrint(
       'The card $currentIndex is Moving to $left, $top',
+    );
+  }
+
+  void _onCancelling() {
+    debugPrint(
+      'The card is Cancelling',
     );
   }
 }
