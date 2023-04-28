@@ -214,8 +214,7 @@ class _CardSwiperState<T extends Widget> extends State<CardSwiper> with SingleTi
       isVerticalSwipingEnabled: widget.isVerticalSwipingEnabled,
       isHorizontalSwipingEnabled: widget.isHorizontalSwipingEnabled,
       offset: widget.offset,
-      verticalShaking: widget.padding.vertical,
-      horizontalShaking: widget.padding.horizontal,
+      threshold: widget.threshold,
     );
   }
 

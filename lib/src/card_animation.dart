@@ -10,10 +10,9 @@ class CardAnimation {
     required this.maxAngle,
     required this.initialScale,
     required this.offset,
+    required this.threshold,
     this.isHorizontalSwipingEnabled = true,
     this.isVerticalSwipingEnabled = true,
-    this.verticalShaking = 0.0,
-    this.horizontalShaking = 0.0,
   })  : scale = initialScale,
         difference = offset;
 
@@ -23,8 +22,7 @@ class CardAnimation {
   final bool isHorizontalSwipingEnabled;
   final bool isVerticalSwipingEnabled;
   final double offset;
-  final double verticalShaking;
-  final double horizontalShaking;
+  final int threshold;
 
   double left = 0;
   double top = 0;
@@ -41,7 +39,7 @@ class CardAnimation {
 
   double get maxMovingDistance => max(left, top);
 
-  bool get isWithinTheShakingRange => left.abs() < horizontalShaking && top.abs() < verticalShaking;
+  bool get isWithinTheShakingRange => left.abs() < threshold && top.abs() < threshold;
 
   void sync() {
     left = _leftAnimation.value;
@@ -80,8 +78,8 @@ class CardAnimation {
   }
 
   double getMovingRatio(Size size) {
-    final verticalRatio = (left.abs() - horizontalShaking) / (size.width / 2);
-    final horizontalRatio = (top.abs() - verticalShaking) / (size.height / 2);
+    final verticalRatio = (left.abs() - threshold) / (size.width / 2);
+    final horizontalRatio = (top.abs() - threshold) / (size.height / 2);
     final ratio = max<double>(verticalRatio, horizontalRatio);
     return ratio >= 1 ? 1 : ratio;
   }
