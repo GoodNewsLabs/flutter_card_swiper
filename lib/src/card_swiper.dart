@@ -156,7 +156,7 @@ class CardSwiper extends StatefulWidget {
           'scale must be between 0 and 1',
         ),
         assert(
-          numberOfCardsDisplayed >= 1 && numberOfCardsDisplayed <= cardsCount,
+          numberOfCardsDisplayed >= 1,
           'you must display at least one card, and no more than [cardsCount]',
         ),
         assert(
