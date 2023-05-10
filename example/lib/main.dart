@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 void main() {
+
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -24,7 +25,8 @@ class Example extends StatefulWidget {
 class _ExamplePageState extends State<Example> {
   final CardSwiperController controller = CardSwiperController();
 
-  final cards = candidates.map((candidate) => ExampleCard(candidate)).toList();
+
+  final cards = candidates.map((candidate) => ExampleCard(candidate,key: Key(candidate.name),)).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,6 @@ class _ExamplePageState extends State<Example> {
                 onSwipe: _onSwipe,
                 onUndo: _onUndo,
                 onMoving: _onMoving,
-                onCancelling: _onCancelling,
                 padding: const EdgeInsets.all(24.0),
                 cardBuilder: (context, index) => cards[index],
               ),
@@ -115,9 +116,4 @@ class _ExamplePageState extends State<Example> {
     );
   }
 
-  void _onCancelling() {
-    debugPrint(
-      'The card is Cancelling',
-    );
-  }
 }

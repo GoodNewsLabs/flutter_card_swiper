@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'example_candidate_model.dart';
 
-class ExampleCard extends StatelessWidget {
+class ExampleCard extends StatefulWidget {
   final ExampleCandidateModel candidate;
 
   const ExampleCard(
@@ -11,12 +11,18 @@ class ExampleCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ExampleCard> createState() => _ExampleCardState();
+}
+
+class _ExampleCardState extends State<ExampleCard> {
+  ExampleCandidateModel get candidate => widget.candidate;
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
-        // color: Colors.transparent,
         color: Colors.white,
         boxShadow: [
           BoxShadow(
